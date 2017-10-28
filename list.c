@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "list.h"
 
 list_t * 
@@ -19,9 +20,13 @@ create_list(free_func_t free, match_func_t match)
 	return l;
 } // end create_list()
 
-void 
+int 
 destroy_list(list_t *l)
 {
+	if (!l)
+	{
+		return -1;
+	} // end if
 	list_len_t len = l->len;
 	list_node_t *curr = l->head;
 	list_node_t *next = NULL;
@@ -29,13 +34,16 @@ destroy_list(list_t *l)
 	while (len--)
 	{
 		next = curr->next;
-		destroy_list_node(l, curr);
-		//sfree(curr); // needed??? NOOOOOOOOOOOOO!!!
+		int res = destroy_list_node(curr);
+		if (res == -1)
+		{
+			return -1;
+		} // end if
 		curr = next;
 	} // end while
 	
-	free(l);
-	
+	sfree(l);
+	return 0;
 } // end destroy_list()
 
 list_node_t *
@@ -60,7 +68,8 @@ add_to_end(list_t *l, list_node_t *n)
 		l->head = n;
 		l->tail = n;
 	} // end else
-	
+			
+	n->container = l;
 	(l->len)++;
 	return n;
 } // end add_to_end()
@@ -75,9 +84,8 @@ remove_from_end(list_t *l)
 	} // end if
 	
 	list_node_t *n = l->tail;
-	
-	if (--(l->len))
-	{
+	if ((l->len) - 1)
+	{ 
 		l->tail = n->prev;
 		l->tail->next = NULL;
 	} // end if
@@ -87,6 +95,7 @@ remove_from_end(list_t *l)
 		l->tail = NULL;
 	} // end else
 	
+	(l->len)--;
 	n->prev = NULL;
 	n->next = NULL;
 	return n;
@@ -102,7 +111,7 @@ remove_from_end_and_destroy(list_t *l)
 		return -1;
 	} // end if
 	
-	return destroy_list_node(l, n);
+	return destroy_list_node(n);
 } // end remove_from_end_and_destroy()
 
 
@@ -129,6 +138,7 @@ add_to_start(list_t *l, list_node_t *n)
 		l->tail = n;
 	} //end else
 	
+	n->container = l;
 	(l->len)++;
 	return n;
 } // end add_to_start()
@@ -154,11 +164,9 @@ remove_from_start(list_t *l)
 		l->tail = NULL;
 	} // end else
 	
+	(l->len)--;
 	n->prev = NULL;
 	n->next = NULL;
-	// ---------------- delete node?
-	
-	// decrement list lenght
 	return n;
 } // end remove_from_start()
 
@@ -171,23 +179,23 @@ remove_from_start_and_destroy(list_t *l)
 		return -1;
 	} // end if
 	
-	return destroy_list_node(l, n);
+	return destroy_list_node(n);
 } // end remove_from_start_and_destroy()
 
 list_node_t *
-remove_list_node(list_t *l, list_node_t *n)
+remove_list_node(list_node_t *n)
 {
-	if (!l || !n)
+	if (!n || !n->container)
 	{
 		return NULL;
 	} // end if
-	else if (l->head == n)
+	else if (n->container->head == n)
 	{
-		return remove_from_start(l);
+		return remove_from_start(n->container);
 	} // else if
-	else if (l->tail == n)
+	else if (n->container->tail == n)
 	{
-		return remove_from_end(l)
+		return remove_from_end(n->container);
 	} // end else if
 	else
 	{
@@ -204,44 +212,47 @@ remove_list_node(list_t *l, list_node_t *n)
 			n->next = NULL;
 		} // end if
 		
+		(n->container->len)--;
 		return n;
 	} // end else
 } // end remove_list_node()
 
 int 
-remove_and_destroy_list_node(list_t *l, list_t *l, list_node_t *n)
+remove_and_destroy_list_node(list_node_t *n)
 {
-	list_node_t *node = remove_list_node(l, n);
+	list_node_t *node = remove_list_node(n);
+	if (!node)
+	{
+		return -1;
+	} // end if
 	
 	return destroy_list_node(node);
 } // end remove_and_destroy_list_node()
 
 list_node_t *
-insert_before_node(list_t *l, list_node_t *old, list_node_t *new)
+insert_before_node(list_node_t *old, list_node_t *new)
 {
-	if (!l || !old || !new)
+	if (!old || !old->container || !new)
 	{
 		return NULL;
 	} // end if
-	else if (l->head == old)
+	else if (old->container->head == old)
 	{
-		add_to_start(l, new);
+		return add_to_start(old->container, new);
 	} // end else if
-	else if (l->tail == old)
+	else if (old->container->tail == old)
 	{
-		if (l->len == 1)
+		if (old->container->len == 1)
 		{
-			new->prev = NULL;
-			l->head = new;
-			l->tail->prev = new;
+			return add_to_start(old->container, new);
 			
 		} // end if
 		else
 		{
-			list_node_t *temp = l->tail->prev;
+			list_node_t *temp = old->container->tail->prev;
 			new->prev = temp;
-			new->next = l->tail;
-			l->tail->prev = new;
+			new->next = old->container->tail;
+			old->container->tail->prev = new;
 			temp->next = new;
 			
 		} // end else
@@ -252,19 +263,53 @@ insert_before_node(list_t *l, list_node_t *old, list_node_t *new)
 		new->prev = temp;
 		new->next = old;
 		old->prev = new;
-		tem->next = new;
+		temp->next = new;
 		
 	} // end else
 	
-	(l->len)++;
+	(old->container->len)++;
 	return new;
 } // end insert_before_node()
 
 list_node_t *
 insert_after_node(list_node_t *old, list_node_t *new)
 {
-
+	if (!old || !old->container || !new)
+	{
+		return NULL;
+	} // end if
+	else if (old->container->tail == old)
+	{
+		return add_to_end(old->container, new);
+	} // end else if
+	else if (old->container->head == old)
+	{
+		if (old->container->len == 1)
+		{
+			return add_to_end(old->container, new);
+		} // end if
+		else
+		{
+			list_node_t *temp = old->container->head->next;
+			new->prev = old->container->head;
+			new->next = temp;
+			old->container->head->next = new;
+			temp->prev = new;
+		} // end else
+	} // end else if
+	else
+	{
+		list_node_t *temp = old->next;
+		new->prev = old;
+		new->next = temp;
+		old->next = new;
+		temp->prev = new;
+	} // end else
+	
+	(old->container->len)++;
+	return new;
 } // end insert_after_node()
+
 list_iterator_t *
 create_list_iterator(list_t *l, list_direction_t d)
 {
@@ -328,6 +373,7 @@ create_list_node(void *data)
 		return NULL;
 	} // end if
 	
+	n->container = NULL;
 	n->prev = NULL;
 	n->next = NULL;
 	n->data = data;
@@ -335,20 +381,20 @@ create_list_node(void *data)
 } // end create_list_node()
 
 int 
-destroy_list_node(list_t *l, list_node_t *n)
+destroy_list_node(list_node_t *n)
 {
-	if (!l->free)
+	if (!n->container->free)
 	{
 		return -1;
 	} // end if
 	
-	return l->free(n);
+	return n->container->free(n);
 } // end destroy_list_node()
 
 list_node_t *
 find_node_by_value(list_t *l, void *v)
 {
-	if (!l->match)
+	if (!l || !l->match)
 	{
 		return NULL;
 	} // end if
@@ -359,11 +405,11 @@ find_node_by_value(list_t *l, void *v)
 		return NULL;
 	} // end if
 	
-	list_node_t *n;
+	list_node_t *n = NULL;
 	
 	while ((n = list_iterator_next(it)))
 	{
-		if (l->match(v, n))
+		if (l->match(n, v))
 		{
 			destroy_list_iterator(it);
 			return n;
@@ -374,41 +420,53 @@ find_node_by_value(list_t *l, void *v)
 	return NULL;
 } // end find_node_by_value()
 
-/*
+
 list_node_t *
-find_node_at_index(list_t *l, int i)
+find_node_at_index(list_t *l, list_index_t index)
 {
 	
 	list_direction_t d = HEAD;
 	
-	if ()
+	if (index <= 0)
 	{
-	
+		if (index == 0)
+		{
+			return NULL;
+		} // end if
+		else if (-index > l->len)
+		{
+			return NULL;
+		} // end else if
+		else
+		{
+			d = TAIL;
+			index = -index;
+		} // end else
 	} // end if
 	
-	if  ()
+	printf("index = %d, len = %d\n", index, l->len);
+	if  (index <= l->len)
 	{
-		list_iteartor_t *it = create_list_iterator(l, d);
+		list_iterator_t *it = create_list_iterator(l, d);
 		if (!it)
 		{
 			return NULL;
 		} // end if
 		
-		list_node_t *n = list_iterator_next(it);
+		list_node_t *n = NULL;
 		while (index--)
 		{
 			n = list_iterator_next(it);
 		} // end while
+		destroy_list_iterator(it);
+		return n;
 		
-	}
+	} // end if
 	
 	return NULL;
 } // end find_node_at_index()
 
 
-
-
-*/
 
 //------------------------------------------
 void safe_free(void **pp)

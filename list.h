@@ -3,15 +3,17 @@
 
 typedef  struct _list_node
 {
+	struct _list *container;
 	struct _list_node *prev;
 	struct _list_node *next;
 	void *data;
 }list_node_t;
 
-typedef int (*free_func_t)(list_node_t *);
+typedef int (*free_func_t)(list_node_t *); // shoudl return -1 on error
 typedef int (*match_func_t)(list_node_t *, void *);
+typedef int list_index_t;
 typedef unsigned int list_len_t;
-typedef struct 
+typedef struct _list
 {
 	list_node_t *head;
 	list_node_t *tail;
@@ -38,7 +40,7 @@ typedef struct
 list_t * 
 create_list(free_func_t free, match_func_t match);
 
-void 
+int
 destroy_list(list_t *l);
 
 list_node_t *
@@ -57,17 +59,17 @@ list_node_t *
 remove_from_start(list_t *l);
 
 list_node_t *
-remove_list_node(list_t *l, list_node_t *n);
+remove_list_node(list_node_t *n);
 
 int 
-remove_and_destroy_list_node(list_t *l, list_node_t *n);
+remove_and_destroy_list_node(list_node_t *n);
 
 
 list_node_t *
-insert_before_node(list_t *l, list_node_t *old, list_node_t *new);
+insert_before_node(list_node_t *old, list_node_t *new);
 
 list_node_t *
-insert_after_node(list_t *l, list_node_t *old, list_node_t *new);
+insert_after_node(list_node_t *old, list_node_t *new);
 
 int
 remove_from_start_and_destroy(list_t *l);
@@ -90,10 +92,10 @@ list_node_t *
 create_list_node(void *data);
 
 int 
-destroy_list_node(list_t *l, list_node_t *n);
+destroy_list_node(list_node_t *n);
 
 list_node_t *
-find_node_at_index(list_t *l, list_len_t i);
+find_node_at_index(list_t *l, list_index_t index);
 
 // -----------------------------------------
 void safe_free(void **pp);
