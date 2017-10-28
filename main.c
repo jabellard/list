@@ -29,7 +29,10 @@ int free_data(list_node_t *n)
 	{
 		return -1;
 	} // end if
-	sfree(n->data);
+	
+	free(n->data);
+	n->data = NULL;
+	//sfree(n->data);
 	return 0;
 } // end free_data
 
@@ -54,7 +57,7 @@ int main()
 	list_t *l1 = create_list(free_data, matchf);
 	
 	// create node elements
-	test_data_t *d0 = create_test_data("data new");
+	test_data_t *d0 = create_test_data("data new"); //	bbbb
 	list_node_t *n0 = create_list_node((void *) d0);
 	
 	test_data_t *d1 = create_test_data("data 1");
@@ -74,7 +77,7 @@ int main()
 	
 	// add nodes to the list -------------------------------
 	add_to_end(l1, n1);
-	add_to_end(l1, n2);
+	add_to_end(l1, n2); /////////////// bbbb
 	add_to_end(l1, n3);
 	add_to_end(l1, n4);
 	add_to_end(l1, n5);
@@ -109,13 +112,21 @@ int main()
 	
 	// destroy the list iterator
 	
-	
 	// destory the list
-	res = destroy_list(l1);
-	if (!res)
-	{
+	res = destroy_list(l1); /////////////bbbbbbbbbb
+	printf("res = %d\n", res);
+	if (l1 == NULL)
+	{ ////////////////bbbbbbbbbbbbbbbbbbbbbbbb
 		printf("destroyed list.\n");
-	}
+		if (!n3)
+		{
+			printf("destroyed node.\n");
+			if (!d3)
+			{
+				printf("destroyed data.\n");
+			} // end if
+		} // end if
+	} // end if
 	
 	return 0;
 } // end main

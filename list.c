@@ -43,6 +43,8 @@ destroy_list(list_t *l)
 	} // end while
 	
 	sfree(l);
+	//free(l);
+	//l = NULL;
 	return 0;
 } // end destroy_list()
 
@@ -395,6 +397,8 @@ destroy_list_node(list_node_t *n)
 	} // end if
 	
 	sfree(n);
+	//free(n);
+	//n = NULL;
 	return 0;
 } // end destroy_list_node()
 
