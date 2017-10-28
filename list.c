@@ -23,15 +23,15 @@ create_list(free_func_t free, match_func_t match)
 int 
 destroy_list(list_t *l)
 {
-	if (!l)
+	if (!l || !l->free)
 	{
 		return -1;
 	} // end if
-	list_len_t len = l->len;
+	//list_len_t len = l->len;
 	list_node_t *curr = l->head;
 	list_node_t *next = NULL;
 	
-	while (len--)
+	while ((l->len)--)
 	{
 		next = curr->next;
 		int res = destroy_list_node(curr);
@@ -153,7 +153,7 @@ remove_from_start(list_t *l)
 	
 	list_node_t *n = l->head;
 	
-	if (--(l->len))
+	if ((l->len) - 1)
 	{
 		l->head = n->next;
 		l->head->prev = NULL;
@@ -383,12 +383,19 @@ create_list_node(void *data)
 int 
 destroy_list_node(list_node_t *n)
 {
-	if (!n->container->free)
+	if (!n || !n->container->free)
 	{
 		return -1;
 	} // end if
 	
-	return n->container->free(n);
+	int res = n->container->free(n);
+	if (res == -1)
+	{
+		return -1;
+	} // end if
+	
+	sfree(n);
+	return 0;
 } // end destroy_list_node()
 
 list_node_t *
@@ -476,7 +483,7 @@ void safe_free(void **pp)
 		free(*pp);
 		*pp = NULL;
 	} // end if
-}// end safe_free
+}// end safe_free()
 
 
 

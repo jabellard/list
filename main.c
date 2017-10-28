@@ -22,10 +22,14 @@ test_data_t * create_test_data(const char *str)
 	
 } // end create_test_data()
 
+// return 0 on success or -1 on error
 int free_data(list_node_t *n)
 {
+	if (!n)
+	{
+		return -1;
+	} // end if
 	sfree(n->data);
-	sfree(n); // nessasary????
 	return 0;
 } // end free_data
 
@@ -97,7 +101,7 @@ int main()
 	printf("list lenght3 = %d\n", l1->len);
 	
 	// searching -----------------------------
-	list_node_t *result = find_node_at_index(l1, 5);
+	list_node_t *result = find_node_at_index(l1, -5);
 	if (result)
 	{
 		printf("search result = %s\n", ((test_data_t *)result->data)->str);
@@ -107,7 +111,11 @@ int main()
 	
 	
 	// destory the list
-
+	res = destroy_list(l1);
+	if (!res)
+	{
+		printf("destroyed list.\n");
+	}
 	
 	return 0;
 } // end main
