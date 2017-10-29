@@ -3,7 +3,7 @@
 #include "list.h"
 
 list_t * 
-create_list(free_func_t free, match_func_t match)
+create_list(data_dtor_func_t dtor, match_func_t match)
 {
 	list_t *l = malloc(sizeof(list_t));
 	if (!l)
@@ -14,7 +14,7 @@ create_list(free_func_t free, match_func_t match)
 	l->head = NULL;
 	l->tail = NULL;
 	l->len = 0;
-	l->free = free;
+	l->data_dtor = dtor;
 	l->match = match;
 	
 	return l;
@@ -23,7 +23,7 @@ create_list(free_func_t free, match_func_t match)
 int 
 destroy_list(list_t *l)
 {
-	if (!l || !l->free)
+	if (!l || !l->data_dtor)
 	{
 		return -1;
 	} // end if
@@ -43,8 +43,6 @@ destroy_list(list_t *l)
 	} // end while
 	
 	sfree(l);
-	//free(l);
-	//l = NULL;
 	return 0;
 } // end destroy_list()
 
@@ -385,20 +383,18 @@ create_list_node(void *data)
 int 
 destroy_list_node(list_node_t *n)
 {
-	if (!n || !n->container->free)
+	if (!n || !n->container->data_dtor)
 	{
 		return -1;
 	} // end if
 	
-	int res = n->container->free(n);
+	int res = n->container->data_dtor(n);
 	if (res == -1)
 	{
 		return -1;
 	} // end if
 	
 	sfree(n);
-	//free(n);
-	//n = NULL;
 	return 0;
 } // end destroy_list_node()
 
@@ -484,6 +480,7 @@ void safe_free(void **pp)
 {
 	if (pp != NULL && *pp != NULL)
 	{
+		printf("deleling...\n");
 		free(*pp);
 		*pp = NULL;
 	} // end if

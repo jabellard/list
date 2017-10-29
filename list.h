@@ -9,7 +9,7 @@ typedef  struct _list_node
 	void *data;
 }list_node_t;
 
-typedef int (*free_func_t)(list_node_t *); // shoudl return -1 on error
+typedef int (*data_dtor_func_t)(list_node_t *); // shoudl return -1 on error
 typedef int (*match_func_t)(list_node_t *, void *);
 typedef int list_index_t;
 typedef unsigned int list_len_t;
@@ -18,7 +18,7 @@ typedef struct _list
 	list_node_t *head;
 	list_node_t *tail;
 	list_len_t len;
-	free_func_t free;
+	data_dtor_func_t data_dtor;
 	match_func_t match;
 	//
 }list_t;
@@ -38,7 +38,7 @@ typedef struct
 //---------------------------------------
 
 list_t * 
-create_list(free_func_t free, match_func_t match);
+create_list(data_dtor_func_t dtor, match_func_t match);
 
 int
 destroy_list(list_t *l);
