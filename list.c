@@ -16,7 +16,6 @@ create_list(data_dtor_func_t dtor, match_func_t match)
 	l->len = 0;
 	l->data_dtor = dtor;
 	l->match = match;
-	
 	return l;
 } // end create_list()
 
@@ -27,7 +26,7 @@ destroy_list(list_t *l)
 	{
 		return -1;
 	} // end if
-	//list_len_t len = l->len;
+	
 	list_node_t *curr = l->head;
 	list_node_t *next = NULL;
 	
@@ -427,7 +426,6 @@ find_node_by_value(list_t *l, void *v)
 	return NULL;
 } // end find_node_by_value()
 
-
 list_node_t *
 find_node_at_index(list_t *l, list_index_t index)
 {
@@ -473,27 +471,22 @@ find_node_at_index(list_t *l, list_index_t index)
 	return NULL;
 } // end find_node_at_index()
 
+list_len_t
+get_list_lenght(list_t *l)
+{
+	if (!l)
+	{
+		return -1;
+	} // end if
+	
+	return l->len;
+} // end get_list_lenght()
 
-
-//------------------------------------------
 void safe_free(void **pp)
 {
 	if (pp != NULL && *pp != NULL)
 	{
-		printf("deleling...\n");
 		free(*pp);
 		*pp = NULL;
 	} // end if
 }// end safe_free()
-
-
-
-
-
-
-
-
-
-
-
-
