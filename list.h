@@ -97,7 +97,7 @@ destroy_list_node(list_node_t *n);
 list_node_t *
 find_node_at_index(list_t *l, list_index_t index);
 
-// -----------------------------------------
+// ----------------------------------------
 void safe_free(void **pp);
 #define sfree(p) safe_free((void**)&(p))
 
