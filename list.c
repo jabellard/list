@@ -100,7 +100,6 @@ remove_from_end(list_t *l)
 	return n;
 } // end remove_from_end()
 
-
 int
 remove_from_end_and_destroy(list_t *l)
 {
@@ -112,7 +111,6 @@ remove_from_end_and_destroy(list_t *l)
 	
 	return destroy_list_node(n);
 } // end remove_from_end_and_destroy()
-
 
 list_node_t *
 add_to_start(list_t *l, list_node_t *n)
@@ -482,7 +480,7 @@ get_list_lenght(list_t *l)
 	return l->len;
 } // end get_list_lenght()
 
-void safe_free(void **pp)
+static void safe_free(void **pp)
 {
 	if (pp != NULL && *pp != NULL)
 	{

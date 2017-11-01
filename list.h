@@ -10,6 +10,7 @@ typedef  struct _list_node
 }list_node_t;
 
 typedef list_node_t stack_element_t;
+typedef list_node_t queue_element_t;
 
 typedef int (*data_dtor_func_t)(void *); 
 typedef int (*match_func_t)(list_node_t *, void *); 
@@ -17,6 +18,7 @@ typedef int list_index_t;
 typedef int list_len_t;
 
 typedef list_len_t stack_len_t;
+typedef list_len_t queue_len_t;
 
 typedef struct _list
 {
@@ -28,6 +30,7 @@ typedef struct _list
 }list_t;
 
 typedef list_t stack_t;
+typedef list_t queue_t;
 
 typedef enum
 {
@@ -44,7 +47,7 @@ typedef struct
 list_t * 
 create_list(data_dtor_func_t dtor, match_func_t match);
 
-int
+int 
 destroy_list(list_t *l);
 
 list_node_t *
@@ -62,6 +65,9 @@ add_to_start(list_t *l, list_node_t *n);
 list_node_t *
 remove_from_start(list_t *l);
 
+int
+remove_from_start_and_destroy(list_t *l);
+
 list_node_t *
 remove_list_node(list_node_t *n);
 
@@ -73,12 +79,6 @@ insert_before_node(list_node_t *old, list_node_t *new);
 
 list_node_t *
 insert_after_node(list_node_t *old, list_node_t *new);
-
-int
-remove_from_start_and_destroy(list_t *l);
-
-list_node_t *
-find_node_by_value(list_t *l, void *v);
 
 list_iterator_t *
 create_list_iterator(list_t *l, list_direction_t d);
@@ -96,12 +96,15 @@ int
 destroy_list_node(list_node_t *n);
 
 list_node_t *
+find_node_by_value(list_t *l, void *v);
+
+list_node_t *
 find_node_at_index(list_t *l, list_index_t index);
 
 list_len_t
 get_list_lenght(list_t *l);
 
-void safe_free(void **pp);
+static void safe_free(void **pp);
 #define sfree(p) safe_free((void**)&(p))
 
 #endif // LIST_H
