@@ -9,10 +9,14 @@ typedef  struct _list_node
 	void *data;
 }list_node_t;
 
-typedef int (*data_dtor_func_t)(list_node_t *); 
+typedef list_node_t stack_element_t;
+
+typedef int (*data_dtor_func_t)(void *); 
 typedef int (*match_func_t)(list_node_t *, void *); 
 typedef int list_index_t;
 typedef int list_len_t;
+
+typedef list_len_t stack_len_t;
 
 typedef struct _list
 {
@@ -22,6 +26,8 @@ typedef struct _list
 	data_dtor_func_t data_dtor;
 	match_func_t match;
 }list_t;
+
+typedef list_t stack_t;
 
 typedef enum
 {

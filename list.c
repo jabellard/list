@@ -382,12 +382,12 @@ create_list_node(void *data)
 int 
 destroy_list_node(list_node_t *n)
 {
-	if (!n || !n->container->data_dtor)
+	if (!n || !n->container || !n->container->data_dtor)
 	{
 		return -1;
 	} // end if
 	
-	int res = n->container->data_dtor(n);
+	int res = n->container->data_dtor(n->data);
 	if (res == -1)
 	{
 		return -1;
