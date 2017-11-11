@@ -3,6 +3,12 @@
 
 #include "list.h"
 
+typedef list_node_t stack_element_t;
+
+typedef list_len_t stack_len_t;
+
+typedef list_t stack_t;
+
 stack_t *
 create_stack(data_dtor_func_t dtor);
 

@@ -3,6 +3,12 @@
 
 #include "list.h"
 
+typedef list_node_t queue_element_t;
+
+typedef list_len_t queue_len_t;
+
+typedef list_t queue_t;
+
 queue_t *
 create_queue(data_dtor_func_t dtor);
 

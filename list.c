@@ -385,11 +385,7 @@ destroy_list_node(list_node_t *n)
 		return -1;
 	} // end if
 	
-	int res = n->container->data_dtor(n->data);
-	if (res == -1)
-	{
-		return -1;
-	} // end if
+	n->container->data_dtor(n->data);
 	
 	sfree(n);
 	return 0;
@@ -413,7 +409,7 @@ find_node_by_value(list_t *l, void *v)
 	
 	while ((n = list_iterator_next(it)))
 	{
-		if (l->match(n, v))
+		if (l->match(n->data, v))
 		{
 			destroy_list_iterator(it);
 			return n;
@@ -480,7 +476,8 @@ get_list_lenght(list_t *l)
 	return l->len;
 } // end get_list_lenght()
 
-static void safe_free(void **pp)
+static void 
+safe_free(void **pp)
 {
 	if (pp != NULL && *pp != NULL)
 	{

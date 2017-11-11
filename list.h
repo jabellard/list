@@ -9,16 +9,10 @@ typedef  struct _list_node
 	void *data;
 }list_node_t;
 
-typedef list_node_t stack_element_t;
-typedef list_node_t queue_element_t;
-
-typedef int (*data_dtor_func_t)(void *); 
-typedef int (*match_func_t)(list_node_t *, void *); 
+typedef void (*data_dtor_func_t)(void *); 
+typedef int (*match_func_t)(void *, void *); 
 typedef int list_index_t;
 typedef int list_len_t;
-
-typedef list_len_t stack_len_t;
-typedef list_len_t queue_len_t;
 
 typedef struct _list
 {
@@ -28,9 +22,6 @@ typedef struct _list
 	data_dtor_func_t data_dtor;
 	match_func_t match;
 }list_t;
-
-typedef list_t stack_t;
-typedef list_t queue_t;
 
 typedef enum
 {
@@ -104,8 +95,8 @@ find_node_at_index(list_t *l, list_index_t index);
 list_len_t
 get_list_lenght(list_t *l);
 
-static void safe_free(void **pp);
+static void 
+safe_free(void **pp);
 #define sfree(p) safe_free((void**)&(p))
 
 #endif // LIST_H
-
