@@ -2,49 +2,60 @@
 #include "queue.h"
 
 queue_t *
-create_queue(data_dtor_func_t dtor)
+queue_create(data_dtor_func_t dtor)
 {
-	return create_list(dtor, NULL);
-} // end create_queue()
+	return list_create(dtor, NULL);
+} // end queue_create()
 
 int
-destroy_queue(queue_t *q)
+queue_destroy(queue_t *q)
 {
-	return destroy_list(q);
-} // end destroy_queue()
+	return list_destroy(q);
+} // end queue_destroy()
 
 queue_element_t *
-push_to_queue(queue_t *q, queue_element_t *e)
+queue_push(queue_t *q, queue_element_t *e)
 {
-	return add_to_end(q, e);
-} // end push_to_queue()
+	return list_push_back(q, e);
+} // end queue_push()
 
 queue_element_t *
-pop_from_queue(queue_t *q)
+queue_pop(queue_t *q)
 {
-	return remove_from_start(q);
-} // end pop_from_queue()
+	return list_pop_front(q);
+} // end queue_pop()
 
 int 
-pop_from_queue_and_destroy(queue_t *q)
+queue_pop_and_destroy(queue_t *q)
 {
-	return remove_from_start_and_destroy(q);
-} // end pop_from_queue_and_destroy()
+	return list_pop_front_and_destroy(q);
+} // queue_pop_and_destroy()
 
 queue_element_t *
-create_queue_element(void *data)
+queue_element_create(void *data)
 {
-	return create_list_node(data);
-} // end create_queue_element()
+	return list_node_create(data);
+} // end queue_element_create()
 
 int
-destroy_queue_element(queue_element_t *e)
+queue_element_destroy(queue_element_t *e)
 {
-	return destroy_list_node(e);
-} // end destroy_queue_element()
+	return list_node_destroy(e);
+} // end queue_element_destroy()
 
 queue_len_t
-get_queue_lenght(queue_t *q)
+queue_get_lenght(queue_t *q)
 {
-	return get_list_lenght(q);
-} // end get_queue_lenght()
+	return list_get_lenght(q);
+} // end queue_get_lenght()
+
+queue_element_t *
+queue_peek(queue_t *q)
+{
+	if (!q || q->len == 0)
+	{
+		return NULL;
+	} // end if
+	
+	return q->head;
+} // end queue_peek()

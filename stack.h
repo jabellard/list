@@ -10,28 +10,30 @@ typedef list_len_t stack_len_t;
 typedef list_t stack_t;
 
 stack_t *
-create_stack(data_dtor_func_t dtor);
+stack_create(data_dtor_func_t dtor);
 
 int
-destroy_stack(stack_t *s);
+stack_destroy(stack_t *s);
 
 stack_element_t *
-push_to_stack(stack_t *s, stack_element_t *e);
+stack_push(stack_t *s, stack_element_t *e);
 
 stack_element_t *
-pop_from_stack(stack_t *s);
+stack_pop(stack_t *s);
 
 int 
-pop_from_stack_and_destroy(stack_t *s);
-
+stack_pop_and_destroy(stack_t *s);
 
 stack_element_t *
-create_stack_element(void *data);
+stack_element_create(void *data);
 
 int
-destroy_stack_element(stack_element_t *e);
+stack_element_destroy(stack_element_t *e);
 
 stack_len_t
-get_stack_lenght(stack_t *s);
+stack_get_lenght(stack_t *s);
+
+stack_element_t *
+stack_peek(stack_t *s);
 
 #endif // STACK_H
